@@ -1,0 +1,17 @@
+#!/usr/bin/expect -f
+set timeout -1
+
+spawn claude --dangerously-skip-permissions --mcp-config /opt/localcc/.mcp.json --dangerously-load-development-channels server:localcc
+
+sleep 8
+send "\r"
+
+expect {
+    "Listening for channel" {
+    }
+    timeout {
+        puts "Timed out waiting for prompt"
+        exit 1
+    }
+}
+interact

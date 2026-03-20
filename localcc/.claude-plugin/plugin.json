@@ -1,0 +1,13 @@
+{
+  "name": "localcc",
+  "description": "OpenAI-compatible API gateway backed by Claude Code — exposes /v1/chat/completions and /v1/responses so any OpenAI SDK client can talk to Claude Code via MCP channels.",
+  "version": "0.0.1",
+  "keywords": [
+    "localcc",
+    "openai",
+    "api",
+    "gateway",
+    "channel",
+    "mcp"
+  ]
+}

@@ -1,0 +1,20 @@
+services:
+  claude:
+    build:
+      context: .
+      dockerfile: ./claude/Dockerfile
+    working_dir: /workspace
+    command: /start-claude.exp
+    ports:
+      - "23411:8788"
+    environment:
+      - LOCALCC_FLAVOR=${LOCALCC_FLAVOR:-openai}
+    stdin_open: true
+    tty: true
+    volumes:
+      - claude-home:/home/claude
+      - ./claude/start-claude.exp:/start-claude.exp:ro
+    restart: unless-stopped
+
+volumes:
+  claude-home:

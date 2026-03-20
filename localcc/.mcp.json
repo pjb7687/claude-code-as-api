@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "localcc": {
+      "command": "bun",
+      "args": ["run", "--cwd", "/opt/localcc", "--shell=bun", "--silent", "start"]
+    }
+  }
+}
