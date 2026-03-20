@@ -20,6 +20,34 @@ On first run, it will:
 
 The API is available at `http://localhost:23411`.
 
+## How It Works
+
+This project uses Claude Code's [channels](https://docs.anthropic.com/en/docs/claude-code/channels) feature — an MCP-based mechanism that lets external services push messages into a running Claude Code session and receive replies.
+
+```
+Client (any SDK)
+  |
+  | POST /v1/chat/completions or /v1/messages
+  v
+localcc (MCP server + HTTP gateway)
+  |
+  | channel notification ──> Claude Code receives the message
+  |                          Claude Code processes and calls reply tool
+  | <── reply tool call ────
+  v
+localcc resolves the parked HTTP request
+  |
+  | JSON response in the chosen API flavor
+  v
+Client
+```
+
+1. An API request arrives at the localcc HTTP server
+2. The message is delivered to Claude Code via an MCP channel notification
+3. The HTTP request parks, waiting for a response
+4. Claude Code processes the message and calls the `reply` tool
+5. localcc formats the reply in the chosen API flavor and returns it
+
 ## API Flavors
 
 Choose a flavor on first run. The choice is saved to `.localcc-flavor`. Delete the file to rechoose.
@@ -97,28 +125,6 @@ curl http://localhost:23411/v1/messages \
 
 All flavors support `"stream": true`. OpenAI/OpenRouter use `data: {json}\n\n` format. Anthropic uses `event: type\ndata: {json}\n\n` format.
 
-## How It Works
-
-```
-Client (any SDK)
-  |
-  | POST /v1/chat/completions or /v1/messages
-  v
-localcc HTTP server (:8686 inside container, :23411 on host)
-  |
-  | MCP channel notification
-  v
-Claude Code
-  |
-  | reply tool call
-  v
-localcc resolves the parked HTTP request
-  |
-  | JSON response in the chosen flavor
-  v
-Client
-```
-
 ## Configuration
 
 | Variable | Default | Description |
@@ -132,7 +138,7 @@ Change the host port in `compose.yml` under `ports`. To switch flavors, delete `
 ## Project Structure
 
 ```
-cc-channel/
+claude-code-as-api/
   start.sh               # Entry point — login, flavor selection, start
   compose.yml             # Docker Compose configuration
   claude/
